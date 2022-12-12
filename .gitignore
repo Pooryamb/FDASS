@@ -1,2 +1,4 @@
 intermediates/
 rawinput/
+predictions/
+scripts/__pycache__/
