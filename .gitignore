@@ -3,3 +3,4 @@ rawinput/
 predictions/
 scripts/__pycache__/
 scripts/go-basic.obo
+scripts/.*
