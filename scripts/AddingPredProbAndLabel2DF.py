@@ -13,5 +13,4 @@ def AddingPredProbAndLabel2DF(X, model):
     dfNewOrder = df[['target','PredPF','tstart', 'tend',"RF_prob", "PredLabel",  
         'fident', 'alnlen', 'MismatchRatio', 'GapOpenRatio', 'qlen', 'bits',
         'alntmscore', "FracOfPf","p_evalue", 'PF', 'PFstart', 'PFend', 'evalue', 'Status']]
-    dfNewOrder.to_csv("D:/RawOutputAnnotations.csv", sep="\t", index=None)
     return df
