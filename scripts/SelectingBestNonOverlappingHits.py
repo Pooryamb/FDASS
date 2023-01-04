@@ -7,7 +7,7 @@ def SelectingBestNonOverlappingHits(df,PF_Anns = {}):
     are tuples of the intervals of the pfams"""
     ListOfRows = []
     OverlapThreshold = 10
-    for (i, CurID,start, end)  in zip(df.index, df["target"], df['tstart'],df['tend']):
+    for (i, CurID,start, end)  in zip(df.index, df["query"], df['qstart'],df['qend']):
         row = df.loc[i,:]
         ListOfIntervals = PF_Anns.get(CurID, [])
         SignificantOverLap = False
