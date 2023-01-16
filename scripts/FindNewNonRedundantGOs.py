@@ -9,7 +9,7 @@ InDictFormat = GAF.get_ns2assc()
 
 godag = GODag(fin_dag, optional_attrs={'consider', 'replaced_by'}, load_obsolete=True)
 
-PfAnns = pd.read_csv("../predictions/NewPredictionsTb.txt", sep="\t")
+PfAnns = pd.read_csv("../predictions/NewPredictionsTb_AgPfam_e3.txt", sep="\t")
 PF2Go = pd.read_csv("../rawinput/pfam2go.txt", sep="\t")
 mappings = pd.read_csv("../rawinput/Tb/MappingFromUnipToTriTrypID.txt", sep="\t", header=None)
 
@@ -20,8 +20,8 @@ PfAnnsTri = PfAnnsTri[["Query", "PredPF", 0]]
 
 PredGo = PfAnnsTri.merge(PF2Go, left_on = "PredPF", right_on="PF")
 
-PredGo.columns = ['UnipID', 'PredPF', "TriTrypID", 'PF', 'GO', 'GO_desc']
-PredGo = PredGo[["TriTrypID", 'UnipID', 'PredPF', 'GO', 'GO_desc']]
+PredGo.columns = ['UnipID', 'PredPF', "TriTrypID", 'PF', 'GO','namespace', 'GO_desc']
+PredGo = PredGo[["TriTrypID", 'UnipID', 'PredPF', 'GO','namespace', 'GO_desc']]
 
 Associations = {}
 for ns in InDictFormat.keys():
@@ -47,5 +47,5 @@ for i in range(PredGo.shape[0]):
 
 NewGO_ann = pd.DataFrame(NewAnnotations)
 
-NewGO_ann = NewGO_ann[["TriTrypID", "UnipID", "GO",'GO_desc']].drop_duplicates()
+NewGO_ann = NewGO_ann[["TriTrypID", "UnipID", "GO",'namespace','GO_desc']].drop_duplicates()
 NewGO_ann.to_csv("../predictions/NewlyPredictedGOs.tsv", sep="\t", index=None)

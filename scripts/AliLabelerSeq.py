@@ -10,9 +10,9 @@ FalsePositiveThreshold = 0.25
 
 def PreparingAliDF(AliRawDf):
     AliRawDf.columns = "query target fident alnlen mismatch gapopen qstart qend tstart tend qlen tlen evalue bits".split()
-    AliRawDf["query"] = AliRawDf["query"].str.replace(".pdb.gz","", regex=False)
-    AliRawDf["target"] = AliRawDf["target"].str.replace("-F1-model_v3.pdb.gz","", regex=False).str.replace("-F1-model_v3.cif.gz","", regex=False).str.replace("AF-",'', regex=False)
-    AliRawDf["PredPF"] = AliRawDf["query"].str.split("_", expand=True)[3]
+    AliRawDf["target"] = AliRawDf["target"].str.replace(".pdb.gz","", regex=False)
+    AliRawDf["query"] = AliRawDf["query"].str.replace("-F1-model_v3.pdb.gz","", regex=False).str.replace("-F1-model_v3.cif.gz","", regex=False).str.replace("AF-",'', regex=False)
+    AliRawDf["PredPF"] = AliRawDf["target"].str.split("_", expand=True)[3]
     return AliRawDf
 
 def PreparingPfamDF(PF_map):
@@ -28,9 +28,9 @@ def FindingLabels(FoldSeekRawOutput, PfamFile, FoldSeekLabeledOutput): #it takes
    
     FormattedAli = PreparingAliDF(AliRawDf)
     del AliRawDf 
-    merged_df = pd.merge(FormattedAli, PF_map, left_on = ["target"], right_on = ["GeneID"], how='left')
-    merged_df["max_start"] = merged_df[["tstart","PFstart"]].max(axis=1)
-    merged_df["min_end"] = merged_df[["tend","PFend"]].min(axis=1)
+    merged_df = pd.merge(FormattedAli, PF_map, left_on = ["query"], right_on = ["GeneID"], how='left')
+    merged_df["max_start"] = merged_df[["qstart","PFstart"]].max(axis=1)
+    merged_df["min_end"] = merged_df[["qend","PFend"]].min(axis=1)
     merged_df["Status"] = -1
     
     TruePosInds = (merged_df["PredPF"] == merged_df["PF"]) & ((merged_df["min_end"] - merged_df["max_start"] +1 )/(merged_df['PFend'] - merged_df['PFstart'] +1) > Coverage_Of_PfamOnQueryPosThresh)    
@@ -43,20 +43,21 @@ def FindingLabels(FoldSeekRawOutput, PfamFile, FoldSeekLabeledOutput): #it takes
     #As I am doing left merge, I have to set the status of cases where the protein has no 
     # pfam annotation to -1. If I didn't include this step, they would have been labeled as 0
     
-    merged_df2 = merged_df.sort_values("Status", ascending=False).drop_duplicates(['query', 'target', 'fident', 'alnlen', 'mismatch', 'gapopen', 'qstart',
+    merged_df = merged_df.sort_values("Status", ascending=False).drop_duplicates(['query', 'target', 'fident', 'alnlen', 'mismatch', 'gapopen', 'qstart',
        'qend', 'tstart', 'tend', 'qlen', 'tlen', 'evalue', 'bits'])
-    merged_df2 = merged_df2[['query', 'target', 'fident', 'alnlen', 'mismatch', 'gapopen', 'qstart', 'qend', 'tstart', 'tend', 'qlen', 'tlen', 'evalue', 'bits', 
+    merged_df = merged_df[['query', 'target', 'fident', 'alnlen', 'mismatch', 'gapopen', 'qstart', 'qend', 'tstart', 'tend', 'qlen', 'tlen', 'evalue', 'bits', 
     'PredPF', 'PF', 'PFstart', 'PFend', 'Status']]
     #LablelledOutputAdd = FoldSeekOutput + "_labeled.tsv"
-    merged_df2.to_csv(FoldSeekLabeledOutput , sep="\t", index=None)
+    merged_df.to_csv(FoldSeekLabeledOutput , sep="\t", index=None)
     return 0
     
     
-RawFSoutputFormat =  "../rawinput/{}/result_aln_pf_{}_seq"
+RawFSoutputFormat =  "../rawinput/{}/aln_{}_pf_seq_e{}.tsv"
 PfamAddFormat = "../rawinput/{}/Pfam{}.txt"
-LabeledData = "../intermediates/{}/result_aln_pf_{}_seq_labeled.tsv"
+LabeledData = "../intermediates/{}/aln_{}_pf_seq_e{}_labeled.tsv"
 
 Orgs = ["Tb", "Mj", "Ec", "Sc"]
 
 for org in Orgs:
-    FindingLabels(RawFSoutputFormat.format(org, org), PfamAddFormat.format(org, org), LabeledData.format(org, org))
+    for evalue in [3]:
+        FindingLabels(RawFSoutputFormat.format(org, org,evalue), PfamAddFormat.format(org, org), LabeledData.format(org, org,evalue))
