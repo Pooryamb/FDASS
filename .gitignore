@@ -1,4 +1,7 @@
-intermediates/
+intermediates/Tb/
+intermediates/Sc/
+intermediates/Ec/
+intermediates/Mj/
 rawinput/
 predictions/
 scripts/__pycache__/
