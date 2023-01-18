@@ -3,7 +3,7 @@ Functional Domain Annotation by Structural Similarity
 
 
 
-By running the DownloadData.py script, all the data needed for running the notebooks will be downloaded. Besides, it will download the databases of PfamSeeds (Both FoldSeek and MMseqs).
+By running the DownloadFilesAndMakeDirs.sh script, all the data needed for running the notebooks will be downloaded. Besides, it will download the databases of PfamSeeds (Both FoldSeek and MMseqs).
 
 In the rawinput directory, there are four directories each for an organism used in the study (Tb, Ec, Mj, and Sc). In each directory, Pfams v35.0 predictions are available named Pfam{Org}.txt. The output of FoldSeek and MMseqs when the organism’s proteome was searched against Pfam Instances is found in aln_{Org}_pf_e3.tsv and aln_{Org}_pf_seq_e3.tsv respectively. 
 The following commands have generated the FoldSeek output:
