@@ -2,21 +2,36 @@
 Functional Domain Annotation by Structural Similarity
 
 
+We aim to annotate the functional domains of T. brucei based on the
+structural similarity of its proteins to annotated domains. In this 
+regard, we gathered a database of structure of Pfam instances. It 
+was done by cutting the structure of Proteins used as Pfam instance
+on their Pfam borders. Structure database of Pfam instances can be 
+downloaded from shorturl.at/noXZ0.
 
-By running the DownloadFilesAndMakeDirs.sh script, all the data needed for running the notebooks will be downloaded. Besides, it will download the databases of PfamSeeds (Both FoldSeek and MMseqs).
 
-In the rawinput directory, there are four directories each for an organism used in the study (Tb, Ec, Mj, and Sc). In each directory, Pfams v35.0 predictions are available named Pfam{Org}.txt. The output of FoldSeek and MMseqs when the organism’s proteome was searched against Pfam Instances is found in aln_{Org}_pf_e3.tsv and aln_{Org}_pf_seq_e3.tsv respectively. 
-The following commands have generated the FoldSeek output:
+We searched proteome of T. brucei and three other organisms against 
+the Pfam instances by foldseek using following commands:
+
 
 ```
 foldseek search {OrgDB} {PfamDB} aln_{Org}_pf tmpFolder -a --max-seqs 10000000 --cov-mode 1 -c 0.8 -e 3
-foldseek convertalis {OrgDB} {PfamDB} aln_{Org}_pf aln_{Org}_pf_e3.tsv --format-output "query,target,fident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,qlen,tlen,evalue,bits,alntmscore,lddt"
+foldseek convertalis {OrgDB} {PfamDB} aln_{Org}_pf aln_{Org}_pf_e3.tsv --format-output \
+"query,target,fident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,qlen,tlen,evalue,bits,alntmscore,lddt"
 ```
 
-And the following commands generate the MMseqs output:
-```
-mmseqs search {OrgDB} {PfamDB} aln_{Org}_pf_seq tmpFolder -a --max-seqs 10000000 --cov-mode 1 -c 0.8 -e 3
-mmseqs convertalis {OrgDB} {PfamDB} aln_{Org}_pf aln_{Org}_pf_seq_e3.tsv --format-output "query,target,fident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,qlen,tlen,evalue,bits"
-```
-By running AliLabeler.py and AliLabelerSeq.py, the output of FoldSeek and MMseqs will be labeled, which will later be used for training and benchmarking.
 
+In the notebooks, we have shown that based on alignment characteristics of 
+query-pfam instance we can train a model to predict if the aligned part of 
+the query has the same pfam as the instance it has aligned to. We have used
+the trained model to predict new domains in T. brucei.
+
+
+To reproduce the data, first run DownloadFilesAndMakeDirs.sh to download all
+the data needed for the next steps. AliLabeler.py and AliLabelerSeq.py label
+the alignments. TrainingAndBenchmarking.ipynb trains a model and benchmarks 
+the trained model.
+
+Preprint available at: 
+
+https://www.biorxiv.org/content/10.1101/2023.01.18.524644v1
